@@ -1,0 +1,25 @@
+{
+  "name": "nodejs-deploydrive",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js",
+    "start": "node ./src/index.js",
+    "build": "npm run build-docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elentr/nodejs-deploydrive.git"
+  },
+  "keywords": [],
+  "author": "Olena T <tr.13.elena@gmail.com>",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "nodemon": "^3.1.10"
+  }
+}
