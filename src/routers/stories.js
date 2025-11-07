@@ -1,0 +1,31 @@
+import { Router } from 'express';
+import { authenticate } from '../middlewares/authenticate.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { upload } from '../middlewares/upload.js';
+import { createStorySchema, updateStorySchema } from '../validation/stories.js';
+
+import {
+  listStoriesController,
+  createStoryController,
+  updateStoryController,
+} from '../controllers/stories.js';
+
+export const storiesRouter = Router();
+
+storiesRouter.get('/', listStoriesController);
+
+storiesRouter.post(
+  '/',
+  authenticate,
+  upload.single('storyImage'),
+  validateBody(createStorySchema),
+  createStoryController
+);
+
+storiesRouter.patch(
+  '/:storyId',
+  authenticate,
+  upload.single('storyImage'),
+  validateBody(updateStorySchema),
+  updateStoryController
+);

@@ -1,12 +1,16 @@
-// import { setupServer } from './server.js';
-// import { initMongoConnection } from './db/initMongoConnection.js';
+import 'dotenv/config.js';
+import { initMongoDB } from './db/initMongoDB.js';
+import { createServer } from './server.js';
 
-// const bootstrap = async () => {
-//   await initMongoConnection();
-//   setupServer();
-// };
+const PORT = process.env.PORT || 3000;
 
-// bootstrap();
-const message = 'Hello world';
+async function bootstrap() {
+  await initMongoDB();
+  const app = createServer();
 
-console.log(message);
+  app.listen(PORT, () => {
+    console.log(`🚀  Сервер запущено на порту ${PORT}`);
+  });
+}
+
+bootstrap();
