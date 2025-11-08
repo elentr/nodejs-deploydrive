@@ -6,8 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
-    "build": "npm run build-docs"
+
+    "start": "node ./src/index.js",
+    "build": "npm run build-docs",
+    "build-docs": "redocly bundle src/docs/openapi.yaml -o src/docs/swagger.json --ext json",
+    "preview-docs": "redocly preview-docs"
   },
   "repository": {
     "type": "git",
@@ -19,12 +22,14 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@redocly/cli": "^1.28.3",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "nodemon": "^3.1.10"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -33,6 +38,11 @@
     "multer": "^2.0.2",
     "pino-http": "^11.0.0",
     "pino-pretty": "^13.1.2",
+    "cloudinary": "^2.8.0",
+    "cookie-parser": "^1.4.7",
+    "http-errors": "^2.0.0",
+    "joi": "^18.0.1",
+    "morgan": "^1.10.1",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   }

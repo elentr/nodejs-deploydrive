@@ -1,0 +1,504 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Travellers API",
+    "description": "API для платформи мандрівників: автентифікація, користувачі з власними статтями та можливістю зберігати улюблені історії.   Є стрічка історій з пагінацією, фільтрацією за категоріями, а також завантаження фото на Cloudinary.   Усі приватні ендпоінти вимагають Bearer access token.\n"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Авторизація та керування сесіями"
+    },
+    {
+      "name": "Users",
+      "description": "Користувачі та особисті дані"
+    },
+    {
+      "name": "Travellers",
+      "description": "Історії мандрівок (travellers stories)"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Реєстрація нового користувача",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Аліса"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "alice@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "secret12345"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Користувача успішно зареєстровано"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Вхід користувача",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "alice@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "secret12345"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успішний вхід. Повертає accessToken, а refreshToken зберігається у cookies.\n"
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Оновлення access токена за допомогою refresh токена (cookie)",
+        "responses": {
+          "200": {
+            "description": "Успішно оновлено сесію. Повертає новий accessToken."
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Вихід користувача (завершення сесії)",
+        "responses": {
+          "204": {
+            "description": "Користувача успішно розлогінено"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Отримати список користувачів з пагінацією",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успішно знайдено користувачів"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Отримати дані користувача за ID (з його статтями)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успішно знайдено користувача"
+          }
+        }
+      }
+    },
+    "/api/users/me/profile": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Отримати профіль поточного користувача",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успішно отримано дані поточного користувача"
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Оновити дані поточного користувача",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Аліса Джонсон"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Люблю подорожі та каву."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Дані користувача успішно оновлено"
+          }
+        }
+      }
+    },
+    "/api/users/me/avatar": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Оновити аватар користувача",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "avatar"
+                ],
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Аватар успішно оновлено"
+          }
+        }
+      }
+    },
+    "/api/users/me/saved/{travellerId}": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Додати історію до збережених",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "travellerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Історію збережено"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Видалити історію зі збережених",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "travellerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Історію видалено зі збережених"
+          }
+        }
+      }
+    },
+    "/api/travellers": {
+      "get": {
+        "tags": [
+          "Travellers"
+        ],
+        "summary": "Отримати історії мандрівок з пагінацією та фільтрацією за категорією",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 8
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "description": "Фільтр за ID категорії",
+            "schema": {
+              "type": "string",
+              "example": "68fb50c80ae91338641121f0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Історії успішно знайдено"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Travellers"
+        ],
+        "summary": "Створити нову історію мандрівки",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "article",
+                  "category",
+                  "photo"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Йорданія — шлях у Петру"
+                  },
+                  "article": {
+                    "type": "string",
+                    "example": "Петра — одне з нових чудес світу..."
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "68fb50c80ae91338641121f0"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Фото подорожі"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Історію успішно створено"
+          }
+        }
+      }
+    },
+    "/api/travellers/{travellerId}": {
+      "patch": {
+        "tags": [
+          "Travellers"
+        ],
+        "summary": "Оновити історію мандрівки за ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "travellerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "article": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Нове фото (опціонально)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Історію успішно оновлено"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
