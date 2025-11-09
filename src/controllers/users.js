@@ -8,6 +8,8 @@ import {
 } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { uploadToCloudinary } from '../utils/cloudinary.js';
+import { User } from '../models/user.js';
+import { Story } from '../models/story.js';
 
 export async function listUsersController(req, res) {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -52,4 +54,51 @@ export async function addSavedController(req, res) {
 export async function removeSavedController(req, res) {
   const data = await removeSavedStory(req.user._id, req.params.storyId);
   res.json({ status: 200, message: 'Story removed!', data });
+}
+
+export async function getUserByIdStory(req, res) {
+  try {
+    const { userId } = req.params;
+    const { page, perPage } = parsePaginationParams(req.query);
+
+    const user = await User.findById(userId).select('_id name avatarUrl');
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: 404, message: 'User not found', data: {} });
+    }
+
+    const stories = await Story.find({ ownerId: userId })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .exec();
+
+    const totalStories = await Story.countDocuments({ ownerId: userId });
+
+    const data = {
+      user,
+      stories,
+      pagination: {
+        page,
+        perPage,
+        totalPages: Math.ceil(totalStories / perPage),
+        totalStories,
+      },
+    };
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Successfully found user stories!',
+      data,
+    });
+  } catch (error) {
+    console.error('Error fetching user stories:', error.message);
+    return res.status(500).json({
+      status: 500,
+      message: 'Server error',
+      error: error.message,
+    });
+  }
 }

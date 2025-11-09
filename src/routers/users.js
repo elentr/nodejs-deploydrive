@@ -3,6 +3,7 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { updateMeSchema } from '../validation/users.js';
 import { upload } from '../middlewares/upload.js';
+import { getUserByIdStory } from '../controllers/users.js';
 
 import {
   listUsersController,
@@ -36,5 +37,7 @@ usersRouter.post('/me/saved/:storyId', authenticate, addSavedController);
 usersRouter.delete('/me/saved/:storyId', authenticate, removeSavedController);
 
 usersRouter.get('/:userId', getUserByIdController);
+
+usersRouter.get('/:userId/stories', getUserByIdStory);
 
 export default usersRouter;
