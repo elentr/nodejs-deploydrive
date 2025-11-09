@@ -1,4 +1,7 @@
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+
+dotenv.config();
 
 export async function initMongoDB() {
   try {
@@ -16,6 +19,6 @@ export async function initMongoDB() {
       '❌ Помилка підключення до бази даних MongoDB:',
       error.message
     );
-    throw e;
+    throw error;
   }
 }

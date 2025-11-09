@@ -10,9 +10,9 @@ import { storiesRouter } from './routers/stories.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
-
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+
 const swaggerDocument = YAML.load('./src/docs/openapi.yaml');
 
 export function createServer() {
