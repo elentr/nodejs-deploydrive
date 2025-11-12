@@ -4,25 +4,33 @@ info:
   title: Travellers API
   description: >
     API для платформи мандрівників: автентифікація, користувачі з власними
-    статтями та можливістю зберігати улюблені історії.  
+    статтями та можливістю зберігати улюблені історії.
     Є стрічка історій з пагінацією, фільтрацією за категоріями, а також
-    завантаження фото на Cloudinary.  
+    завантаження фото на Cloudinary.
     Усі приватні ендпоінти вимагають Bearer access token.
+
 servers:
-  - url: http://localhost:3000
+  - url: "https://travellers-node.onrender.com"
+
+# Глобальная авторизация по умолчанию
+security:
+  - bearerAuth: []
+
 tags:
   - name: Auth
     description: Авторизація та керування сесіями
   - name: Users
     description: Користувачі та особисті дані
-  - name: Travellers
+  - name: Stories
     description: Історії мандрівок (travellers stories)
 
 paths:
+
   /api/auth/register:
     post:
       tags: [Auth]
       summary: Реєстрація нового користувача
+      security: [] # публичный
       requestBody:
         required: true
         content:
@@ -31,7 +39,7 @@ paths:
               type: object
               required: [name, email, password]
               properties:
-                name: { type: string, example: Аліса }
+                name: { type: string, example: "Аліса" }
                 email: { type: string, example: alice@example.com }
                 password: { type: string, example: secret12345 }
       responses:
@@ -42,6 +50,7 @@ paths:
     post:
       tags: [Auth]
       summary: Вхід користувача
+      security: [] # публичный
       requestBody:
         required: true
         content:
@@ -54,22 +63,22 @@ paths:
                 password: { type: string, example: secret12345 }
       responses:
         '200':
-          description: >
-            Успішний вхід. Повертає accessToken, а refreshToken зберігається у
-            cookies.
+          description: Успішний вхід. Повертає accessToken.
 
   /api/auth/refresh:
     post:
       tags: [Auth]
       summary: Оновлення access токена за допомогою refresh токена (cookie)
+      security: [] # публичный
       responses:
         '200':
-          description: Успішно оновлено сесію. Повертає новий accessToken.
+          description: Успішно оновлено accessToken
 
   /api/auth/logout:
     post:
       tags: [Auth]
-      summary: Вихід користувача (завершення сесії)
+      summary: Вихід користувача
+      # приватный - глобальный security применяется
       responses:
         '204':
           description: Користувача успішно розлогінено
@@ -78,6 +87,7 @@ paths:
     get:
       tags: [Users]
       summary: Отримати список користувачів з пагінацією
+      security: [] # публичный
       parameters:
         - in: query
           name: page
@@ -92,7 +102,8 @@ paths:
   /api/users/{userId}:
     get:
       tags: [Users]
-      summary: Отримати дані користувача за ID (з його статтями)
+      summary: Отримати дані користувача за ID
+      security: [] # публичный
       parameters:
         - in: path
           name: userId
@@ -112,7 +123,6 @@ paths:
     get:
       tags: [Users]
       summary: Отримати профіль поточного користувача
-      security: [{ bearerAuth: [] }]
       responses:
         '200':
           description: Успішно отримано дані поточного користувача
@@ -121,7 +131,6 @@ paths:
     patch:
       tags: [Users]
       summary: Оновити дані поточного користувача
-      security: [{ bearerAuth: [] }]
       requestBody:
         required: true
         content:
@@ -129,8 +138,8 @@ paths:
             schema:
               type: object
               properties:
-                name: { type: string, example: Аліса Джонсон }
-                description: { type: string, example: Люблю подорожі та каву. }
+                name: { type: string, example: "Аліса Джонсон" }
+                description: { type: string, example: "Люблю подорожі та каву." }
       responses:
         '200':
           description: Дані користувача успішно оновлено
@@ -139,7 +148,6 @@ paths:
     patch:
       tags: [Users]
       summary: Оновити аватар користувача
-      security: [{ bearerAuth: [] }]
       requestBody:
         required: true
         content:
@@ -159,7 +167,6 @@ paths:
     post:
       tags: [Users]
       summary: Додати історію до збережених
-      security: [{ bearerAuth: [] }]
       parameters:
         - in: path
           name: travellerId
@@ -171,7 +178,6 @@ paths:
     delete:
       tags: [Users]
       summary: Видалити історію зі збережених
-      security: [{ bearerAuth: [] }]
       parameters:
         - in: path
           name: travellerId
@@ -181,11 +187,11 @@ paths:
         '200':
           description: Історію видалено зі збережених
 
-  /api/travellers:
+  /api/stories:
     get:
-      tags: [Travellers]
-      summary:
-        Отримати історії мандрівок з пагінацією та фільтрацією за категорією
+      tags: [Stories]
+      summary: Отримати історії мандрівок з пагінацією та фільтрацією за категорією
+      security: [] # публичный
       parameters:
         - in: query
           name: page
@@ -202,22 +208,20 @@ paths:
           description: Історії успішно знайдено
 
     post:
-      tags: [Travellers]
+      tags: [Stories]
       summary: Створити нову історію мандрівки
-      security: [{ bearerAuth: [] }]
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
-              required: [title, article, category, photo]
+              required: [title, article, category, storyImage]
               properties:
-                title: { type: string, example: Йорданія — шлях у Петру }
-                article:
-                  { type: string, example: Петра — одне з нових чудес світу... }
+                title: { type: string, example: "Йорданія — шлях у Петру" }
+                article: { type: string, example: "Петра — одне з нових чудес світу..." }
                 category: { type: string, example: 68fb50c80ae91338641121f0 }
-                photo:
+                storyImage:
                   type: string
                   format: binary
                   description: Фото подорожі
@@ -225,14 +229,13 @@ paths:
         '201':
           description: Історію успішно створено
 
-  /api/travellers/{travellerId}:
+  /api/stories/{storiesId}:
     patch:
-      tags: [Travellers]
+      tags: [Stories]
       summary: Оновити історію мандрівки за ID
-      security: [{ bearerAuth: [] }]
       parameters:
         - in: path
-          name: travellerId
+          name: storiesId
           required: true
           schema: { type: string }
       requestBody:
@@ -245,7 +248,7 @@ paths:
                 title: { type: string }
                 article: { type: string }
                 category: { type: string }
-                photo:
+                storyImage:
                   type: string
                   format: binary
                   description: Нове фото (опціонально)
@@ -258,3 +261,4 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
