@@ -7,7 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "https://travellers-node.onrender.com"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
     }
   ],
   "tags": [
@@ -20,7 +25,7 @@
       "description": "Користувачі та особисті дані"
     },
     {
-      "name": "Travellers",
+      "name": "Stories",
       "description": "Історії мандрівок (travellers stories)"
     }
   ],
@@ -31,6 +36,7 @@
           "Auth"
         ],
         "summary": "Реєстрація нового користувача",
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -73,6 +79,7 @@
           "Auth"
         ],
         "summary": "Вхід користувача",
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -110,6 +117,7 @@
           "Auth"
         ],
         "summary": "Оновлення access токена за допомогою refresh токена (cookie)",
+        "security": [],
         "responses": {
           "200": {
             "description": "Успішно оновлено сесію. Повертає новий accessToken."
@@ -136,6 +144,7 @@
           "Users"
         ],
         "summary": "Отримати список користувачів з пагінацією",
+        "security": [],
         "parameters": [
           {
             "in": "query",
@@ -167,6 +176,7 @@
           "Users"
         ],
         "summary": "Отримати дані користувача за ID (з його статтями)",
+        "security": [],
         "parameters": [
           {
             "in": "path",
@@ -347,12 +357,13 @@
         }
       }
     },
-    "/api/travellers": {
+    "/api/stories": {
       "get": {
         "tags": [
-          "Travellers"
+          "Stories"
         ],
         "summary": "Отримати історії мандрівок з пагінацією та фільтрацією за категорією",
+        "security": [],
         "parameters": [
           {
             "in": "query",
@@ -388,7 +399,7 @@
       },
       "post": {
         "tags": [
-          "Travellers"
+          "Stories"
         ],
         "summary": "Створити нову історію мандрівки",
         "security": [
@@ -406,7 +417,7 @@
                   "title",
                   "article",
                   "category",
-                  "photo"
+                  "storyImage"
                 ],
                 "properties": {
                   "title": {
@@ -421,7 +432,7 @@
                     "type": "string",
                     "example": "68fb50c80ae91338641121f0"
                   },
-                  "photo": {
+                  "storyImage": {
                     "type": "string",
                     "format": "binary",
                     "description": "Фото подорожі"
@@ -438,10 +449,10 @@
         }
       }
     },
-    "/api/travellers/{travellerId}": {
+    "/api/stories/{storiesId}": {
       "patch": {
         "tags": [
-          "Travellers"
+          "Stories"
         ],
         "summary": "Оновити історію мандрівки за ID",
         "security": [
@@ -452,7 +463,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "travellerId",
+            "name": "storiesId",
             "required": true,
             "schema": {
               "type": "string"
@@ -497,7 +508,8 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
