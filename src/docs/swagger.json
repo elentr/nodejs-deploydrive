@@ -303,7 +303,7 @@
         }
       }
     },
-    "/api/users/me/saved/{storiesId}": {
+    "/api/users/me/saved/{travellerId}": {
       "post": {
         "tags": [
           "Users"
@@ -317,7 +317,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "storiesId",
+            "name": "travellerId",
             "required": true,
             "schema": {
               "type": "string"
@@ -343,7 +343,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "storiesId",
+            "name": "travellerId",
             "required": true,
             "schema": {
               "type": "string"
