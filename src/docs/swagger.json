@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Travellers API",
-    "description": "API для платформи мандрівників: автентифікація, користувачі з власними статтями та можливістю зберігати улюблені історії.   Є стрічка історій з пагінацією, фільтрацією за категоріями, а також завантаження фото на Cloudinary.   Усі приватні ендпоінти вимагають Bearer access token.\n"
+    "description": "API для платформи мандрівників: автентифікація, користувачі з власними статтями та можливістю зберігати улюблені історії. Є стрічка історій з пагінацією, фільтрацією за категоріями, а також завантаження фото на Cloudinary. Усі приватні ендпоінти вимагають Bearer access token.\n"
   },
   "servers": [
     {
@@ -106,7 +106,7 @@
         },
         "responses": {
           "200": {
-            "description": "Успішний вхід. Повертає accessToken, а refreshToken зберігається у cookies.\n"
+            "description": "Успішний вхід. Повертає accessToken."
           }
         }
       }
@@ -120,7 +120,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Успішно оновлено сесію. Повертає новий accessToken."
+            "description": "Успішно оновлено accessToken"
           }
         }
       }
@@ -130,7 +130,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Вихід користувача (завершення сесії)",
+        "summary": "Вихід користувача",
         "responses": {
           "204": {
             "description": "Користувача успішно розлогінено"
@@ -175,7 +175,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Отримати дані користувача за ID (з його статтями)",
+        "summary": "Отримати дані користувача за ID",
         "security": [],
         "parameters": [
           {
@@ -216,11 +216,6 @@
           "Users"
         ],
         "summary": "Отримати профіль поточного користувача",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "responses": {
           "200": {
             "description": "Успішно отримано дані поточного користувача"
@@ -234,11 +229,6 @@
           "Users"
         ],
         "summary": "Оновити дані поточного користувача",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -272,11 +262,6 @@
           "Users"
         ],
         "summary": "Оновити аватар користувача",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -309,11 +294,6 @@
           "Users"
         ],
         "summary": "Додати історію до збережених",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "parameters": [
           {
             "in": "path",
@@ -335,11 +315,6 @@
           "Users"
         ],
         "summary": "Видалити історію зі збережених",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "parameters": [
           {
             "in": "path",
@@ -402,11 +377,6 @@
           "Stories"
         ],
         "summary": "Створити нову історію мандрівки",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -455,11 +425,6 @@
           "Stories"
         ],
         "summary": "Оновити історію мандрівки за ID",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "parameters": [
           {
             "in": "path",
@@ -486,7 +451,7 @@
                   "category": {
                     "type": "string"
                   },
-                  "photo": {
+                  "storyImage": {
                     "type": "string",
                     "format": "binary",
                     "description": "Нове фото (опціонально)"
