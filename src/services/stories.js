@@ -1,24 +1,40 @@
 import createHttpError from 'http-errors';
 import { Story } from '../models/story.js';
+import { Category } from '../models/category.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export async function getStories({ page, perPage, category }) {
-  const q = Story.find();
+  const filter = {};
+
   if (category) {
-    const ids = category.split(',').filter(Boolean);
-    q.where('category').in(ids);
+    filter.category = category;
   }
 
-  const [count, items] = await Promise.all([
-    Story.find().merge(q).countDocuments(),
+  const q = Story.find(filter);
+
+  const [count, items, categories] = await Promise.all([
+    Story.countDocuments(filter),
     q
       .sort({ createdAt: -1 })
       .skip((page - 1) * perPage)
       .limit(perPage)
       .lean(),
+    Category.find().lean(),
   ]);
 
-  return { data: items, ...calculatePaginationData(count, perPage, page) };
+  const categoryMap = Object.fromEntries(
+    categories.map(c => [c._id.toString(), c.name])
+  );
+
+  const itemsWithCategoryName = items.map(story => ({
+    ...story,
+    categoryName: categoryMap[story.category] || "Unknown",
+  }));
+
+  return {
+    data: itemsWithCategoryName,
+    ...calculatePaginationData(count, perPage, page),
+  };
 }
 
 export async function createStory(ownerId, payload) {
@@ -32,6 +48,8 @@ export async function updateStory(storyId, ownerId, payload) {
     payload,
     { new: true }
   ).lean();
+
   if (!updated) throw createHttpError(404, 'Story not found');
+
   return updated;
 }

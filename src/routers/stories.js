@@ -17,7 +17,7 @@ storiesRouter.get('/', listStoriesController);
 storiesRouter.post(
   '/',
   authenticate,
-  upload.single('storyImage'),
+  upload.single('img'),
   validateBody(createStorySchema),
   createStoryController
 );
@@ -25,7 +25,7 @@ storiesRouter.post(
 storiesRouter.patch(
   '/:storyId',
   authenticate,
-  upload.single('storyImage'),
+  upload.single('img'),
   validateBody(updateStorySchema),
   updateStoryController
 );

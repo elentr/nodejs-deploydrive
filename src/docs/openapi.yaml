@@ -1,6 +1,7 @@
 openapi: 3.1.0
+
 info:
-  version: '1.0.0'
+  version: "1.0.0"
   title: Travellers API
   description: >
     API для платформи мандрівників: автентифікація, користувачі з власними
@@ -12,7 +13,6 @@ info:
 servers:
   - url: "https://travellers-node.onrender.com"
 
-# Глобальная авторизация по умолчанию
 security:
   - bearerAuth: []
 
@@ -22,7 +22,9 @@ tags:
   - name: Users
     description: Користувачі та особисті дані
   - name: Stories
-    description: Історії мандрівок (travellers stories)
+    description: Історії мандрівок
+  - name: Categories
+    description: Категорії історій
 
 paths:
 
@@ -30,7 +32,7 @@ paths:
     post:
       tags: [Auth]
       summary: Реєстрація нового користувача
-      security: [] # публичный
+      security: []
       requestBody:
         required: true
         content:
@@ -39,18 +41,25 @@ paths:
               type: object
               required: [name, email, password]
               properties:
-                name: { type: string, example: "Аліса" }
-                email: { type: string, example: alice@example.com }
-                password: { type: string, example: secret12345 }
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              name: "Аліса"
+              email: "alice@example.com"
+              password: "secret12345"
       responses:
-        '201':
+        "201":
           description: Користувача успішно зареєстровано
 
   /api/auth/login:
     post:
       tags: [Auth]
       summary: Вхід користувача
-      security: [] # публичный
+      security: []
       requestBody:
         required: true
         content:
@@ -59,51 +68,57 @@ paths:
               type: object
               required: [email, password]
               properties:
-                email: { type: string, example: alice@example.com }
-                password: { type: string, example: secret12345 }
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: "alice@example.com"
+              password: "secret12345"
       responses:
-        '200':
-          description: Успішний вхід. Повертає accessToken.
+        "200":
+          description: Успішний вхід
 
   /api/auth/refresh:
     post:
       tags: [Auth]
-      summary: Оновлення access токена за допомогою refresh токена (cookie)
-      security: [] # публичный
+      summary: Оновлення access токена
+      security: []
       responses:
-        '200':
-          description: Успішно оновлено accessToken
+        "200":
+          description: Новий accessToken видано
 
   /api/auth/logout:
     post:
       tags: [Auth]
       summary: Вихід користувача
-      # приватный - глобальный security применяется
       responses:
-        '204':
+        "204":
           description: Користувача успішно розлогінено
 
   /api/users:
     get:
       tags: [Users]
-      summary: Отримати список користувачів з пагінацією
-      security: [] # публичный
+      summary: Отримати список користувачів
+      security: []
       parameters:
         - in: query
           name: page
-          schema: { type: integer, example: 1 }
+          schema:
+            type: integer
         - in: query
           name: perPage
-          schema: { type: integer, example: 10 }
+          schema:
+            type: integer
       responses:
-        '200':
-          description: Успішно знайдено користувачів
+        "200":
+          description: Список користувачів
 
   /api/users/{userId}:
     get:
       tags: [Users]
       summary: Отримати дані користувача за ID
-      security: [] # публичный
+      security: []
       parameters:
         - in: path
           name: userId
@@ -111,21 +126,21 @@ paths:
           schema: { type: string }
         - in: query
           name: page
-          schema: { type: integer, example: 1 }
+          schema: { type: integer }
         - in: query
           name: perPage
-          schema: { type: integer, example: 10 }
+          schema: { type: integer }
       responses:
-        '200':
-          description: Успішно знайдено користувача
+        "200":
+          description: Дані користувача
 
   /api/users/me/profile:
     get:
       tags: [Users]
       summary: Отримати профіль поточного користувача
       responses:
-        '200':
-          description: Успішно отримано дані поточного користувача
+        "200":
+          description: Профіль отримано
 
   /api/users/me:
     patch:
@@ -138,11 +153,18 @@ paths:
             schema:
               type: object
               properties:
-                name: { type: string, example: "Аліса Джонсон" }
-                description: { type: string, example: "Люблю подорожі та каву." }
+                name:
+                  type: string
+                description:
+                  type:
+                    - string
+                    - "null"
+            example:
+              name: "Аліса"
+              description: "Люблю подорожі"
       responses:
-        '200':
-          description: Дані користувача успішно оновлено
+        "200":
+          description: Дані оновлено
 
   /api/users/me/avatar:
     patch:
@@ -160,8 +182,8 @@ paths:
                   type: string
                   format: binary
       responses:
-        '200':
-          description: Аватар успішно оновлено
+        "200":
+          description: Аватар оновлено
 
   /api/users/me/saved/{storiesId}:
     post:
@@ -173,8 +195,8 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200':
-          description: Історію збережено
+        "200":
+          description: Історію додано
     delete:
       tags: [Users]
       summary: Видалити історію зі збережених
@@ -184,60 +206,59 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200':
-          description: Історію видалено зі збережених
+        "200":
+          description: Історію видалено
 
   /api/stories:
     get:
       tags: [Stories]
-      summary: Отримати історії мандрівок з пагінацією та фільтрацією за категорією
-      security: [] # публичный
+      summary: Отримати історії
+      security: []
       parameters:
         - in: query
           name: page
-          schema: { type: integer, example: 1 }
+          schema: { type: integer }
         - in: query
           name: perPage
-          schema: { type: integer, example: 8 }
+          schema: { type: integer }
         - in: query
           name: category
-          description: Фільтр за ID категорії
-          schema: { type: string, example: 68fb50c80ae91338641121f0 }
+          schema: { type: string }
       responses:
-        '200':
-          description: Історії успішно знайдено
+        "200":
+          description: Список історій
 
     post:
       tags: [Stories]
-      summary: Створити нову історію мандрівки
+      summary: Створити нову історію
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
-              required: [title, article, category, storyImage]
+              required: [title, article, category, img]
               properties:
-                title: { type: string, example: "Йорданія — шлях у Петру" }
-                article: { type: string, example: "Петра — одне з нових чудес світу..." }
-                category: { type: string, example: 68fb50c80ae91338641121f0 }
-                storyImage:
+                title: { type: string }
+                article: { type: string }
+                category: { type: string }
+                img:
                   type: string
                   format: binary
-                  description: Фото подорожі
       responses:
-        '201':
-          description: Історію успішно створено
+        "201":
+          description: Створено
 
   /api/stories/{storiesId}:
     patch:
       tags: [Stories]
-      summary: Оновити історію мандрівки за ID
+      summary: Оновити історію
       parameters:
         - in: path
           name: storiesId
           required: true
-          schema: { type: string }
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -248,13 +269,31 @@ paths:
                 title: { type: string }
                 article: { type: string }
                 category: { type: string }
-                storyImage:
+                img:
                   type: string
                   format: binary
-                  description: Нове фото (опціонально)
       responses:
-        '200':
-          description: Історію успішно оновлено
+        "200":
+          description: Оновлено
+
+  /api/categories/stories:
+    get:
+      tags: [Categories]
+      summary: Отримати список категорій
+      security: []
+      responses:
+        "200":
+          description: Категорії знайдено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { type: string }
 
 components:
   securitySchemes:
