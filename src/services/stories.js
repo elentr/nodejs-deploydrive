@@ -28,7 +28,7 @@ export async function getStories({ page, perPage, category }) {
 
   const itemsWithCategoryName = items.map(story => ({
     ...story,
-    categoryName: categoryMap[story.category] || "Unknown",
+    categoryName: categoryMap[story.category] || 'Unknown',
   }));
 
   return {
@@ -52,4 +52,25 @@ export async function updateStory(storyId, ownerId, payload) {
   if (!updated) throw createHttpError(404, 'Story not found');
 
   return updated;
+}
+
+export async function getPopularStories({ page, perPage }) {
+  const skip = (page - 1) * perPage;
+
+  const stories = await Story.find({})
+    .sort({ favoriteCount: -1 })
+    .skip(skip)
+    .limit(perPage)
+    .lean();
+
+  const total = await Story.countDocuments();
+  const hasNextPage = page * perPage < total;
+
+  return {
+    stories,
+    total,
+    page,
+    perPage,
+    hasNextPage,
+  };
 }

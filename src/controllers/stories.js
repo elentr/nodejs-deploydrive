@@ -1,4 +1,9 @@
-import { getStories, createStory, updateStory } from '../services/stories.js';
+import {
+  getStories,
+  createStory,
+  updateStory,
+  getPopularStories,
+} from '../services/stories.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { uploadToCloudinary } from '../utils/cloudinary.js';
 
@@ -8,6 +13,18 @@ export async function listStoriesController(req, res) {
 
   const data = await getStories({ page, perPage, category });
   res.json({ status: 200, message: 'Successfully found stories!', data });
+}
+
+export async function getPopularStoriesController(req, res) {
+  const { page, perPage } = parsePaginationParams(req.query);
+
+  const data = await getPopularStories({ page, perPage });
+
+  res.json({
+    status: 200,
+    message: 'Successfully found popular stories!',
+    data,
+  });
 }
 
 export async function createStoryController(req, res) {

@@ -8,11 +8,14 @@ import {
   listStoriesController,
   createStoryController,
   updateStoryController,
+  getPopularStoriesController,
 } from '../controllers/stories.js';
 
 export const storiesRouter = Router();
 
 storiesRouter.get('/', listStoriesController);
+
+storiesRouter.get('/popular', getPopularStoriesController);
 
 storiesRouter.post(
   '/',

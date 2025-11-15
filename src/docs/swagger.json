@@ -3,25 +3,47 @@
   "info": {
     "version": "1.0.0",
     "title": "Travellers API",
-    "description": "API для платформи мандрівників: автентифікація, користувачі з власними статтями та можливістю зберігати улюблені історії. Є стрічка історій з пагінацією, фільтрацією за категоріями, а також завантаження фото на Cloudinary. Усі приватні ендпоінти вимагають Bearer access token.\n"
+    "description": "API для платформи мандрівників: автентифікація, користувачі з власними статтями та можливістю зберігати улюблені історії. Є стрічка історій з пагінацією, фільтрацією за категоріями, а також завантаження фото на Cloudinary. Усі приватні ендпоінти вимагають Bearer access token.\n",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
   },
   "servers": [
-    { "url": "https://travellers-node.onrender.com" }
+    {
+      "url": "https://travellers-node.onrender.com"
+    }
   ],
   "security": [
-    { "bearerAuth": [] }
+    {
+      "bearerAuth": []
+    }
   ],
   "tags": [
-    { "name": "Auth", "description": "Авторизація та керування сесіями" },
-    { "name": "Users", "description": "Користувачі та особисті дані" },
-    { "name": "Stories", "description": "Історії мандрівок (travellers stories)" },
-    {  "name": "Categories", "description": "Категорії історій" }
+    {
+      "name": "Auth",
+      "description": "Авторизація та керування сесіями"
+    },
+    {
+      "name": "Users",
+      "description": "Користувачі та особисті дані"
+    },
+    {
+      "name": "Stories",
+      "description": "Історії мандрівок"
+    },
+    {
+      "name": "Categories",
+      "description": "Категорії історій"
+    }
   ],
-
   "paths": {
     "/api/auth/register": {
       "post": {
-        "tags": ["Auth"],
+        "operationId": "registerUser",
+        "tags": [
+          "Auth"
+        ],
         "summary": "Реєстрація нового користувача",
         "security": [],
         "requestBody": {
@@ -37,18 +59,20 @@
                 ],
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "example": "Аліса"
+                    "type": "string"
                   },
                   "email": {
-                    "type": "string",
-                    "example": "alice@example.com"
+                    "type": "string"
                   },
                   "password": {
-                    "type": "string",
-                    "example": "secret12345"
+                    "type": "string"
                   }
                 }
+              },
+              "example": {
+                "name": "Аліса",
+                "email": "alice@example.com",
+                "password": "secret12345"
               }
             }
           }
@@ -62,7 +86,10 @@
     },
     "/api/auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "operationId": "loginUser",
+        "tags": [
+          "Auth"
+        ],
         "summary": "Вхід користувача",
         "security": [],
         "requestBody": {
@@ -77,29 +104,34 @@
                 ],
                 "properties": {
                   "email": {
-                    "type": "string",
-                    "example": "alice@example.com"
+                    "type": "string"
                   },
                   "password": {
-                    "type": "string",
-                    "example": "secret12345"
+                    "type": "string"
                   }
                 }
+              },
+              "example": {
+                "email": "alice@example.com",
+                "password": "secret12345"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Успішний вхід. Повертає accessToken."
+            "description": "Успішний вхід"
           }
         }
       }
     },
     "/api/auth/refresh": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Оновлення access токена за допомогою refresh токена (cookie)",
+        "operationId": "refreshAccessToken",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Оновлення access токена",
         "security": [],
         "responses": {
           "200": {
@@ -110,6 +142,7 @@
     },
     "/api/auth/logout": {
       "post": {
+        "operationId": "logoutUser",
         "tags": [
           "Auth"
         ],
@@ -123,37 +156,41 @@
     },
     "/api/users": {
       "get": {
-        "tags": ["Users"],
-        "summary": "Отримати список користувачів з пагінацією",
+        "operationId": "getUsers",
+        "tags": [
+          "Users"
+        ],
+        "summary": "Отримати список користувачів",
         "security": [],
         "parameters": [
           {
             "in": "query",
             "name": "page",
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "integer"
             }
           },
           {
             "in": "query",
             "name": "perPage",
             "schema": {
-              "type": "integer",
-              "example": 10
+              "type": "integer"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Успішно знайдено користувачів"
+            "description": "Список користувачів"
           }
         }
       }
     },
     "/api/users/{userId}": {
       "get": {
-        "tags": ["Users"],
+        "operationId": "getUserById",
+        "tags": [
+          "Users"
+        ],
         "summary": "Отримати дані користувача за ID",
         "security": [],
         "parameters": [
@@ -169,40 +206,44 @@
             "in": "query",
             "name": "page",
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "integer"
             }
           },
           {
             "in": "query",
             "name": "perPage",
             "schema": {
-              "type": "integer",
-              "example": 10
+              "type": "integer"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Успішно знайдено користувача"
+            "description": "Дані користувача"
           }
         }
       }
     },
     "/api/users/me/profile": {
       "get": {
-        "tags": ["Users"],
+        "operationId": "getMyProfile",
+        "tags": [
+          "Users"
+        ],
         "summary": "Отримати профіль поточного користувача",
         "responses": {
           "200": {
-            "description": "Успішно отримано дані поточного користувача"
+            "description": "Профіль отримано"
           }
         }
       }
     },
     "/api/users/me": {
       "patch": {
-        "tags": ["Users"],
+        "operationId": "updateMyProfile",
+        "tags": [
+          "Users"
+        ],
         "summary": "Оновити дані поточного користувача",
         "requestBody": {
           "required": true,
@@ -212,28 +253,36 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "example": "Аліса Джонсон"
+                    "type": "string"
                   },
                   "description": {
-                    "type": "string",
-                    "example": "Люблю подорожі та каву."
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
+              },
+              "example": {
+                "name": "Аліса",
+                "description": "Люблю подорожі"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Дані користувача успішно оновлено"
+            "description": "Дані оновлено"
           }
         }
       }
     },
     "/api/users/me/avatar": {
       "patch": {
-        "tags": ["Users"],
+        "operationId": "updateMyAvatar",
+        "tags": [
+          "Users"
+        ],
         "summary": "Оновити аватар користувача",
         "requestBody": {
           "required": true,
@@ -256,14 +305,17 @@
         },
         "responses": {
           "200": {
-            "description": "Аватар успішно оновлено"
+            "description": "Аватар оновлено"
           }
         }
       }
     },
     "/api/users/me/saved/{storiesId}": {
       "post": {
-        "tags": ["Users"],
+        "operationId": "addStoryToSaved",
+        "tags": [
+          "Users"
+        ],
         "summary": "Додати історію до збережених",
         "parameters": [
           {
@@ -277,12 +329,15 @@
         ],
         "responses": {
           "200": {
-            "description": "Історію збережено"
+            "description": "Історію додано"
           }
         }
       },
       "delete": {
-        "tags": ["Users"],
+        "operationId": "removeStoryFromSaved",
+        "tags": [
+          "Users"
+        ],
         "summary": "Видалити історію зі збережених",
         "parameters": [
           {
@@ -296,15 +351,148 @@
         ],
         "responses": {
           "200": {
-            "description": "Історію видалено зі збережених"
+            "description": "Історію видалено"
           }
         }
       }
     },
     "/api/stories": {
       "get": {
-        "tags": ["Stories"],
-        "summary": "Отримати історії мандрівок з пагінацією та фільтрацією за категорією",
+        "operationId": "getStories",
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Отримати історії",
+        "security": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список історій"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createStory",
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Створити нову історію",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "article",
+                  "category",
+                  "img"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "article": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Створено"
+          }
+        }
+      }
+    },
+    "/api/stories/{storiesId}": {
+      "patch": {
+        "operationId": "updateStory",
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Оновити історію",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "storiesId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "article": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Оновлено"
+          }
+        }
+      }
+    },
+    "/api/stories/popular": {
+      "get": {
+        "operationId": "getPopularStories",
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Отримати популярні історії",
         "security": [],
         "parameters": [
           {
@@ -320,136 +508,123 @@
             "name": "perPage",
             "schema": {
               "type": "integer",
-              "example": 8
-            }
-          },
-          {
-            "in": "query",
-            "name": "category",
-            "description": "Фільтр за ID категорії",
-            "schema": {
-              "type": "string",
-              "example": "68fb50c80ae91338641121f0"
+              "example": 3
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Історії успішно знайдено"
-          }
-        }
-      },
-      "post": {
-        "tags": ["Stories"],
-        "summary": "Створити нову історію мандрівки",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "title",
-                  "article",
-                  "category",
-                  "img"
-                ],
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "example": "Йорданія — шлях у Петру"
-                  },
-                  "article": {
-                    "type": "string",
-                    "example": "Петра — одне з нових чудес світу..."
-                  },
-                  "category": {
-                    "type": "string",
-                    "example": "68fb50c80ae91338641121f0"
-                  },
-                  "img": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "Фото подорожі"
+            "description": "Популярні історії успішно знайдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found popular stories!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "stories": {
+                          "type": "array",
+                          "description": "Список популярних історій",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string",
+                                "example": "68498236a100312bea079004"
+                              },
+                              "img": {
+                                "type": "string",
+                                "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079004.webp"
+                              },
+                              "title": {
+                                "type": "string",
+                                "example": "Сицилія: вулкани, міста i смаки"
+                              },
+                              "article": {
+                                "type": "string",
+                                "example": "Сицилія — це поєднання історії, природи i кулінарії..."
+                              },
+                              "category": {
+                                "type": "string",
+                                "example": "68fb50c80ae91338641121f2"
+                              },
+                              "ownerId": {
+                                "type": "string",
+                                "example": "6881563901add19ee16fcffb"
+                              },
+                              "date": {
+                                "type": "string",
+                                "example": "2025-03-08"
+                              },
+                              "favoriteCount": {
+                                "type": "integer",
+                                "example": 29
+                              }
+                            }
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 94
+                        },
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Історію успішно створено"
-          }
-        }
-      }
-    },
-    "/api/stories/{storiesId}": {
-      "patch": {
-        "tags": ["Stories"],
-        "summary": "Оновити історію мандрівки за ID",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "storiesId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string"
-                  },
-                  "article": {
-                    "type": "string"
-                  },
-                  "category": {
-                    "type": "string"
-                  },
-                  "img": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "Нове фото (опціонально)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Історію успішно оновлено"
           }
         }
       }
     },
     "/api/categories": {
       "get": {
-        "tags": ["Categories"],
-        "summary": "Отримати список категорій історій",
+        "operationId": "getCategories",
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Отримати список категорій",
+        "security": [],
         "responses": {
           "200": {
-            "description": "Успішно знайдено категорії",
+            "description": "Категорії знайдено",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "message", "data"],
                   "properties": {
-                    "status": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "Successfully found story categories!" },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "array",
-                      "items": { "type": "string" },
-                     "example": ["Азія", "Гори", "Європа"]
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
