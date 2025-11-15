@@ -3,6 +3,6 @@ import { listStoryCategoriesController } from '../controllers/categories.js';
 
 export const categoriesRouter = Router();
 
-categoriesRouter.get('/stories', listStoryCategoriesController);
+categoriesRouter.get('/', listStoryCategoriesController);
 
 export default categoriesRouter;

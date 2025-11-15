@@ -276,7 +276,7 @@ paths:
         "200":
           description: Оновлено
 
-  /api/categories/stories:
+  /api/categories:
     get:
       tags: [Categories]
       summary: Отримати список категорій
