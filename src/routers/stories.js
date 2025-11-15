@@ -8,16 +8,19 @@ import {
   listStoriesController,
   createStoryController,
   updateStoryController,
+  getPopularStoriesController,
 } from '../controllers/stories.js';
 
 export const storiesRouter = Router();
 
 storiesRouter.get('/', listStoriesController);
 
+storiesRouter.get('/popular', getPopularStoriesController);
+
 storiesRouter.post(
   '/',
   authenticate,
-  upload.single('storyImage'),
+  upload.single('img'),
   validateBody(createStorySchema),
   createStoryController
 );
@@ -25,7 +28,7 @@ storiesRouter.post(
 storiesRouter.patch(
   '/:storyId',
   authenticate,
-  upload.single('storyImage'),
+  upload.single('img'),
   validateBody(updateStorySchema),
   updateStoryController
 );
