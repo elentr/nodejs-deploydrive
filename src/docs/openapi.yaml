@@ -194,14 +194,14 @@ paths:
         '200':
           description: Аватар оновлено
 
-  /api/users/me/saved/{storiesId}:
+  /api/users/me/saved/{travellerId}:
     post:
       operationId: addStoryToSaved
       tags: [Users]
       summary: Додати історію до збережених
       parameters:
         - in: path
-          name: storiesId
+          name: travellerId
           required: true
           schema: { type: string }
       responses:
@@ -213,7 +213,7 @@ paths:
       summary: Видалити історію зі збережених
       parameters:
         - in: path
-          name: storiesId
+          name: travellerId
           required: true
           schema: { type: string }
       responses:
