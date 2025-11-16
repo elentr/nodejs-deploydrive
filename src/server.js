@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { authRouter } from './routers/auth.js';
 import { usersRouter } from './routers/users.js';
 import { storiesRouter } from './routers/stories.js';
+import { categoriesRouter } from './routers/categories.js';
 
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -26,6 +27,7 @@ export function createServer() {
   app.use('/api/auth', authRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/stories', storiesRouter);
+  app.use('/api/categories', categoriesRouter);
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
