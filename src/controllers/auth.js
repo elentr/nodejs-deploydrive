@@ -8,6 +8,14 @@ import {
 const isProd = process.env.NODE_ENV === 'production';
 
 export async function registerController(req, res) {
+  const { error } = registerSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      status: 400,
+      message: error.details[0].message,
+    });
+  }
+
   const user = await registerUser(req.body);
   res.status(201).json({
     status: 201,
