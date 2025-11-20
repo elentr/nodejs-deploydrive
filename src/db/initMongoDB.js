@@ -13,12 +13,9 @@ export async function initMongoDB() {
     const uri = `mongodb+srv://${user}:${password}@${url}/${db}?retryWrites=true&w=majority`;
 
     await mongoose.connect(uri);
-    console.log('✅ Підключення до бази даних MongoDB успішне.');
+    console.log('Підключення до бази даних MongoDB успішне.');
   } catch (error) {
-    console.error(
-      '❌ Помилка підключення до бази даних MongoDB:',
-      error.message
-    );
+    console.error('Помилка підключення до бази даних MongoDB:', error.message);
     throw error;
   }
 }

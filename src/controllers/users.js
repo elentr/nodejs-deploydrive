@@ -24,14 +24,56 @@ export async function getUserByIdController(req, res) {
   res.json({ status: 200, message: 'Successfully found user!', data });
 }
 
-export async function meController(req, res) {
-  const data = await getMe(req.user._id);
-  res.json({ status: 200, message: 'Successfully found current user!', data });
+export async function meController(req, res, next) {
+  try {
+    const user = await getMe(req.user._id);
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.avatarUrl ?? null,
+      description: user.description ?? '',
+      articlesAmount: user.articlesAmount ?? 0,
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
-export async function updateMeController(req, res) {
-  const data = await updateMe(req.user._id, req.body);
-  res.json({ status: 200, message: 'Successfully updated user!', data });
+export async function updateMeController(req, res, next) {
+  try {
+    const userId = req.user._id;
+
+    let avatarUrl = req.body.avatarUrl || null;
+
+    if (req.file) {
+      if (req.file.size > 500 * 1024) {
+        return res.status(400).json({
+          status: 400,
+          message: 'Avatar too large (max 500kB)',
+          data: {},
+        });
+      }
+
+      avatarUrl = await uploadToCloudinary(req.file);
+    }
+
+    const updated = await updateMe(userId, {
+      name: req.body.name,
+      email: req.body.email,
+      description: req.body.description,
+      avatarUrl,
+    });
+
+    res.json({
+      status: 200,
+      message: 'Successfully updated user!',
+      data: updated,
+    });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function updateAvatarController(req, res) {
