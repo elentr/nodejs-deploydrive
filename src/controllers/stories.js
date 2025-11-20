@@ -27,7 +27,7 @@ export async function getPopularStoriesController(req, res) {
   });
 }
 
-export async function createStoryController(req, res) {
+export async function createStoryController(req, res, next) {
   if (!req.file) {
     return res
       .status(400)
