@@ -3,6 +3,7 @@ import { authenticate } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { upload } from '../middlewares/upload.js';
 import { createStorySchema, updateStorySchema } from '../validation/stories.js';
+import { getStoryByIdController } from '../controllers/stories.js';
 
 import {
   listStoriesController,
@@ -32,3 +33,7 @@ storiesRouter.patch(
   validateBody(updateStorySchema),
   updateStoryController
 );
+
+storiesRouter.get(
+  '/:storyId',
+  getStoryByIdController);
