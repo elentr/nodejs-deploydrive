@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-import path from 'path';
 
 import { authRouter } from './routers/auth.js';
 import { usersRouter } from './routers/users.js';
@@ -24,9 +23,6 @@ export function createServer() {
   app.use(morgan('dev'));
   app.use(express.json());
   app.use(cookieParser());
-
-  app.use('/swagger', express.static(path.resolve('src/swagger')));
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use('/api/auth', authRouter);
   app.use('/api/users', usersRouter);
