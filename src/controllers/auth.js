@@ -7,8 +7,16 @@ import {
 
 const isProd = process.env.NODE_ENV === 'production';
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,       
+  sameSite: 'none',   
+  path: '/',           
+};
+
 export async function registerController(req, res) {
   const user = await registerUser(req.body);
+
   res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
@@ -23,34 +31,40 @@ export async function loginController(req, res) {
     password
   );
 
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    expires: session.refreshTokenValidUntil,
-    path: '/api/auth',
-  });
-  res.cookie('sessionId', session._id.toString(), {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    expires: session.refreshTokenValidUntil,
-    path: '/api/auth',
-  });
+  res.cookie(
+    'refreshToken',
+    refreshToken,
+    {
+      ...cookieOptions,
+      expires: session.refreshTokenValidUntil,
+    }
+  );
+
+  res.cookie(
+    'sessionId',
+    session._id.toString(),
+    {
+      ...cookieOptions,
+      expires: session.refreshTokenValidUntil,
+    }
+  );
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully logged in an user!',
+    message: 'Successfully logged in a user!',
     data: { accessToken },
   });
 }
 
 export async function refreshController(req, res) {
   const { refreshToken } = req.cookies || {};
+
   if (!refreshToken) {
-    return res
-      .status(401)
-      .json({ status: 401, message: 'No refresh token provided', data: {} });
+    return res.status(401).json({
+      status: 401,
+      message: 'No refresh token provided',
+      data: {},
+    });
   }
 
   const {
@@ -59,20 +73,24 @@ export async function refreshController(req, res) {
     session,
   } = await refreshSession(refreshToken);
 
-  res.cookie('refreshToken', newRefresh, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    expires: session.refreshTokenValidUntil,
-    path: '/api/auth',
-  });
-  res.cookie('sessionId', session._id.toString(), {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    expires: session.refreshTokenValidUntil,
-    path: '/api/auth',
-  });
+  // update cookies
+  res.cookie(
+    'refreshToken',
+    newRefresh,
+    {
+      ...cookieOptions,
+      expires: session.refreshTokenValidUntil,
+    }
+  );
+
+  res.cookie(
+    'sessionId',
+    session._id.toString(),
+    {
+      ...cookieOptions,
+      expires: session.refreshTokenValidUntil,
+    }
+  );
 
   res.status(200).json({
     status: 200,
@@ -83,21 +101,17 @@ export async function refreshController(req, res) {
 
 export async function logoutController(req, res) {
   const { sessionId } = req.cookies || {};
+
   if (typeof sessionId === 'string') {
     await logoutUser(sessionId);
   }
 
   res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    path: '/',
+    ...cookieOptions,
   });
+
   res.clearCookie('sessionId', {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    path: '/api/auth',
+    ...cookieOptions,
   });
 
   res.status(204).end();
