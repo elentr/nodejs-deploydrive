@@ -28,14 +28,14 @@ export async function loginController(req, res) {
     secure: isProd,
     sameSite: 'strict',
     expires: session.refreshTokenValidUntil,
-    path: '/',
+    path: '/api/auth',
   });
   res.cookie('sessionId', session._id.toString(), {
     httpOnly: true,
     secure: isProd,
     sameSite: 'strict',
     expires: session.refreshTokenValidUntil,
-    path: '/',
+    path: '/api/auth',
   });
 
   res.status(200).json({
@@ -64,14 +64,14 @@ export async function refreshController(req, res) {
     secure: isProd,
     sameSite: 'strict',
     expires: session.refreshTokenValidUntil,
-    path: '/',
+    path: '/api/auth',
   });
   res.cookie('sessionId', session._id.toString(), {
     httpOnly: true,
     secure: isProd,
     sameSite: 'strict',
     expires: session.refreshTokenValidUntil,
-    path: '/',
+    path: '/api/auth',
   });
 
   res.status(200).json({
@@ -97,7 +97,7 @@ export async function logoutController(req, res) {
     httpOnly: true,
     secure: isProd,
     sameSite: 'strict',
-    path: '/',
+    path: '/api/auth',
   });
 
   res.status(204).end();
