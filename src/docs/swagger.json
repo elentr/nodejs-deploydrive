@@ -41,7 +41,9 @@
     "/api/auth/register": {
       "post": {
         "operationId": "registerUser",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Реєстрація нового користувача",
         "security": [],
         "requestBody": {
@@ -50,7 +52,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "email", "password"],
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "name": {
                     "type": "string"
@@ -81,7 +87,9 @@
     "/api/auth/login": {
       "post": {
         "operationId": "loginUser",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Вхід користувача",
         "security": [],
         "requestBody": {
@@ -90,7 +98,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password"],
+                "required": [
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "email": {
                     "type": "string"
@@ -117,12 +128,14 @@
     "/api/auth/refresh": {
       "post": {
         "operationId": "refreshAccessToken",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Оновлення access токена",
         "security": [],
         "responses": {
           "200": {
-            "description": "Успішно оновлено accessToken"
+            "description": "Новий accessToken видано"
           }
         }
       }
@@ -130,7 +143,9 @@
     "/api/auth/logout": {
       "post": {
         "operationId": "logoutUser",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Вихід користувача",
         "responses": {
           "204": {
@@ -142,7 +157,9 @@
     "/api/users": {
       "get": {
         "operationId": "getUsers",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Отримати список користувачів",
         "security": [],
         "parameters": [
@@ -171,7 +188,9 @@
     "/api/users/{userId}": {
       "get": {
         "operationId": "getUserById",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Отримати дані користувача за ID",
         "security": [],
         "parameters": [
@@ -208,7 +227,9 @@
     "/api/users/me/profile": {
       "get": {
         "operationId": "getMyProfile",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Отримати профіль поточного користувача",
         "responses": {
           "200": {
@@ -220,7 +241,9 @@
     "/api/users/me": {
       "patch": {
         "operationId": "updateMyProfile",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Оновити дані поточного користувача",
         "requestBody": {
           "required": true,
@@ -233,7 +256,10 @@
                     "type": "string"
                   },
                   "description": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               },
@@ -254,7 +280,9 @@
     "/api/users/me/avatar": {
       "patch": {
         "operationId": "updateMyAvatar",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Оновити аватар користувача",
         "requestBody": {
           "required": true,
@@ -262,7 +290,9 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["avatar"],
+                "required": [
+                  "avatar"
+                ],
                 "properties": {
                   "avatar": {
                     "type": "string",
@@ -283,7 +313,9 @@
     "/api/users/me/saved/{travellerId}": {
       "post": {
         "operationId": "addStoryToSaved",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Додати історію до збережених",
         "parameters": [
           {
@@ -303,7 +335,9 @@
       },
       "delete": {
         "operationId": "removeStoryFromSaved",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Видалити історію зі збережених",
         "parameters": [
           {
@@ -325,7 +359,9 @@
     "/api/stories": {
       "get": {
         "operationId": "getStories",
-        "tags": ["Stories"],
+        "tags": [
+          "Stories"
+        ],
         "summary": "Отримати історії",
         "security": [],
         "parameters": [
@@ -359,7 +395,9 @@
       },
       "post": {
         "operationId": "createStory",
-        "tags": ["Stories"],
+        "tags": [
+          "Stories"
+        ],
         "summary": "Створити нову історію",
         "requestBody": {
           "required": true,
@@ -367,7 +405,12 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["title", "article", "category", "img"],
+                "required": [
+                  "title",
+                  "article",
+                  "category",
+                  "img"
+                ],
                 "properties": {
                   "title": {
                     "type": "string"
@@ -397,7 +440,9 @@
     "/api/stories/{storiesId}": {
       "patch": {
         "operationId": "updateStory",
-        "tags": ["Stories"],
+        "tags": [
+          "Stories"
+        ],
         "summary": "Оновити історію",
         "parameters": [
           {
@@ -444,7 +489,9 @@
     "/api/stories/popular": {
       "get": {
         "operationId": "getPopularStories",
-        "tags": ["Stories"],
+        "tags": [
+          "Stories"
+        ],
         "summary": "Отримати популярні історії",
         "security": [],
         "parameters": [
@@ -504,7 +551,7 @@
                               },
                               "article": {
                                 "type": "string",
-                                "example": "Сицилія — це поєднання історії, природи i кулінарії..."
+                                "example": "Сицилія — це поєднання історії, природи i\nкулінарії...\n"
                               },
                               "category": {
                                 "type": "string",
@@ -554,7 +601,9 @@
     "/api/categories": {
       "get": {
         "operationId": "getCategories",
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "summary": "Отримати список категорій",
         "security": [],
         "responses": {

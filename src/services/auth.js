@@ -1,66 +1,79 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
+
 import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
 
-const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = process.env;
-
-if (!JWT_ACCESS_SECRET || !JWT_REFRESH_SECRET) {
-  throw new Error('JWT secrets are not set in .env');
-}
-
-const ACCESS_EXPIRES_IN = '15m';
-const REFRESH_EXPIRES_IN = '1d';
-
-export function generateTokens(userId) {
-  const accessToken = jwt.sign({ userId }, JWT_ACCESS_SECRET, {
-    expiresIn: ACCESS_EXPIRES_IN,
-  });
-
-  const refreshToken = jwt.sign({ userId }, JWT_REFRESH_SECRET, {
-    expiresIn: REFRESH_EXPIRES_IN,
-  });
-
-  return { accessToken, refreshToken };
-}
-
-export function verifyRefreshToken(token) {
-  try {
-    return jwt.verify(token, JWT_REFRESH_SECRET);
-  } catch (err) {
-    throw createHttpError(401, 'Invalid refresh token');
-  }
-}
+const ACCESS_TTL_MS = 15 * 60 * 1000;
+const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export async function registerUser(payload) {
   const exists = await User.findOne({ email: payload.email.toLowerCase() });
   if (exists) throw createHttpError(409, 'Email in use');
 
-  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+  const hash = await bcrypt.hash(payload.password, 10);
 
   const user = await User.create({
     name: payload.name,
     email: payload.email.toLowerCase(),
-    password: encryptedPassword,
-    avatarUrl: null,
-    description: '',
-    articlesAmount: 0,
+    password: hash,
   });
 
-  const { password, ...safeUser } = user.toObject();
-  return safeUser;
+  const { password, ...safe } = user.toObject();
+  return safe;
 }
 
 export async function loginUser(email, password) {
   const user = await User.findOne({ email: email.toLowerCase() });
-  if (!user) throw createHttpError(401, 'Email or password incorrect');
+  if (!user)
+    throw new createHttpError.Unauthorized('Email or password is incorrect');
 
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) throw createHttpError(401, 'Email or password incorrect');
+  if (!ok)
+    throw new createHttpError.Unauthorized('Email or password is incorrect');
 
-  const { password: _, ...safeUser } = user.toObject();
+  await Session.deleteOne({ userId: user._id });
 
-  const { accessToken, refreshToken } = generateTokens(user._id);
+  const accessToken = crypto.randomBytes(30).toString('base64');
+  const refreshToken = crypto.randomBytes(30).toString('base64');
 
-  return { user: safeUser, accessToken, refreshToken };
+  const session = await Session.create({
+    userId: user._id,
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + ACCESS_TTL_MS),
+    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TTL_MS),
+  });
+
+  return { accessToken, refreshToken, session };
+}
+
+export async function refreshSession(refreshToken) {
+  const session = await Session.findOne({ refreshToken });
+  if (!session) throw new createHttpError.Unauthorized('Session not found');
+
+  if (session.refreshTokenValidUntil < new Date()) {
+    await Session.deleteOne({ _id: session._id });
+    throw new createHttpError.Unauthorized('Refresh token is expired');
+  }
+
+  await Session.deleteOne({ _id: session._id });
+
+  const accessToken = crypto.randomBytes(30).toString('base64');
+  const newRefreshToken = crypto.randomBytes(30).toString('base64');
+
+  const newSession = await Session.create({
+    userId: session.userId,
+    accessToken,
+    refreshToken: newRefreshToken,
+    accessTokenValidUntil: new Date(Date.now() + ACCESS_TTL_MS),
+    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TTL_MS),
+  });
+
+  return { accessToken, refreshToken: newRefreshToken, session: newSession };
+}
+
+export async function logoutUser(sessionId) {
+  await Session.deleteOne({ _id: sessionId });
 }
