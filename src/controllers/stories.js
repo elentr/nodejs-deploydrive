@@ -6,6 +6,7 @@ import {
 } from '../services/stories.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { uploadToCloudinary } from '../utils/cloudinary.js';
+import { Story } from '../models/story.js';
 
 export async function listStoriesController(req, res) {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -58,3 +59,20 @@ export async function updateStoryController(req, res) {
   const data = await updateStory(req.params.storyId, req.user._id, payload);
   res.json({ status: 200, message: 'Successfully updated a story!', data });
 }
+
+export const getStoryByIdController = async (req, res) => {
+  const { storyId } = req.params;
+  console.log("Fetching story with ID:", storyId);
+
+  try {
+    const story = await Story.findById(storyId); // або твій метод
+    if (!story) {
+      console.log("Story not found");
+      return res.status(404).json({ message: "Story not found" });
+    }
+    res.json(story);
+  } catch (err) {
+    console.error("Error fetching story:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
